@@ -37,8 +37,38 @@ a.  Produce a graph of the **mean** monthly temperature in **celsius**. Draw 
       ) +
       theme(legend.position="top") +
       scale_color_manual(values = c('Winter' = 'blue', 'Spring' = 'green', 'Summer' = 'red', 'Autumn' = 'orange')) +
-      scale_x_continuous(breaks = 1:12)
+      scale_x_continuous(breaks = 1:12) 
     ```
+
+b.  Produce a similar plot with four sets of lines: mean monthly temperature in celsius, mean montly O3, mean monthly PM10, and mean monthly dewpoint. Figure out a way to distinguish between the four lines. Again, make sure the plot is publication-ready (clean and clear labels).
+
+    ```{r}
+    # Calculate mean monthly values in Celsius
+    monthly_mean_values <- nnmaps %>%
+      group_by(month_numeric) %>%
+      summarize(
+        mean_temp = mean(temp, na.rm = TRUE),
+        mean_o3 = mean(o3, na.rm = TRUE),
+        mean_pm10 = mean(pm10, na.rm = TRUE),
+        mean_dewpoint = mean(dewpoint, na.rm = TRUE)
+      )
+
+    # reshape the data
+    df_long <- tidyr::gather(monthly_mean_values, key = "variable", value = "value", -month_numeric)
+
+    # create the scatter plot with lines connecting points
+    ggplot(df_long, aes(x = factor(month_numeric), y = value, color = variable, group = variable)) +
+      geom_point() +
+      geom_line() +
+      labs(title = "Monthly Climate Features",
+           x = "Month",
+           y = "Mean Value") +
+      scale_x_discrete(labels = month.abb)
+    ```
+
+    **\"Which of the four variables seems to have the least seasonal trend?\"**
+
+    From the plot, we can see that **pm10** has the least seasonal trend.
 
 ## Running Code
 
