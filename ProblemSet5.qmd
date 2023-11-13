@@ -23,14 +23,11 @@ a.  Produce a graph of the **mean** monthly temperature in **celsius**. Draw 
 
     # Calculate mean monthly temperature in Celsius
     monthly_mean_temp <- nnmaps %>%
-      group_by(season, month) %>%
+      group_by(season, month_numeric) %>%
       summarize(mean_temp = mean(temp))
 
-    # Set plot theme
-    #theme_set(theme_minimal())
-
     # Plot the scatter plot with lines
-    ggplot(monthly_mean_temp, aes(x = month, y = mean_temp, color = season, group = season)) +
+    ggplot(monthly_mean_temp, aes(x = month_numeric, y = mean_temp, color = season, group = season)) +
       geom_point() +
       geom_line() +
       labs(
@@ -39,7 +36,8 @@ a.  Produce a graph of the **mean** monthly temperature in **celsius**. Draw 
         y = "Mean Monthly Temperature (°C)"
       ) +
       theme(legend.position="top") +
-      scale_color_manual(values = c('Winter' = 'blue', 'Spring' = 'green', 'Summer' = 'red', 'Fall' = 'orange'))
+      scale_color_manual(values = c('Winter' = 'blue', 'Spring' = 'green', 'Summer' = 'red', 'Autumn' = 'orange')) +
+      scale_x_continuous(breaks = 1:12)
     ```
 
 ## Running Code
