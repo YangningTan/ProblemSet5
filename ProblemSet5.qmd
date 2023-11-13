@@ -1,0 +1,60 @@
+---
+title: "ProblemSet5"
+author: "Yangning Tan"
+format: html
+editor: visual
+---
+
+## Problem 1 - Plotting
+
+We first import the data set.
+
+```{r}
+nnmaps <- read.csv("/Users/tyn/Documents/R/data set/chicago-nmmaps.csv")
+```
+
+a.  Produce a graph of the **mean** monthly temperature in **celsius**. Draw a scatter-plot where the x-axis is month and the y-axis is the average monthly temperature in celsius. Add a line connecting the points within each season and color the lines and points by season (same color for lines and points in the same season). Be sure both x-axis and the legend are ordered appropriately, and that all labels/titles are clear and ready for publication (e.g. no variable names).
+
+    ```{r}
+    library(ggplot2)
+    library(tidyverse)
+    # Convert Fahrenheit to Celsius
+    nnmaps$temp <- (nnmaps$temp - 32) * 5/9
+
+    # Calculate mean monthly temperature in Celsius
+    monthly_mean_temp <- nnmaps %>%
+      group_by(season, month) %>%
+      summarize(mean_temp = mean(temp))
+
+    # Set plot theme
+    #theme_set(theme_minimal())
+
+    # Plot the scatter plot with lines
+    ggplot(monthly_mean_temp, aes(x = month, y = mean_temp, color = season, group = season)) +
+      geom_point() +
+      geom_line() +
+      labs(
+        title = "Mean Monthly Temperature in Celsius by Season",
+        x = "Month",
+        y = "Mean Monthly Temperature (°C)"
+      ) +
+      theme(legend.position="top") +
+      scale_color_manual(values = c('Winter' = 'blue', 'Spring' = 'green', 'Summer' = 'red', 'Fall' = 'orange'))
+    ```
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
