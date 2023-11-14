@@ -66,23 +66,105 @@ b.  Produce a similar plot with four sets of lines: mean monthly temperature in 
       scale_x_discrete(labels = month.abb)
     ```
 
-    **\"Which of the four variables seems to have the least seasonal trend?\"**
+    **"Which of the four variables seems to have the least seasonal trend?"**
 
     From the plot, we can see that **pm10** has the least seasonal trend.
 
-## Running Code
+## Problem 2 - OOP Programming
 
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+Create a class to represent a polynomial expression (such as ) called `poly`. Do this using S4.
 
-```{r}
-1 + 1
-```
+a.  For the `poly` class, define the following:
 
-You can add options to executable code like this
+    -   A constructor
 
-```{r}
-#| echo: false
-2 * 2
-```
+    -   A validator
 
-The `echo: false` option disables the printing of code (only output is displayed).
+    -   A `show` method
+
+    -   Addition and substraction
+
+    ```{r}
+    # define the "poly" class
+    setClass("poly",
+             slots = list(degree = "numeric",
+                       coeff = "numeric"))
+
+    # constructor
+    poly <- function(degree, coeff) {
+      return(new("poly", degree = degree, coeff = coeff))
+    }
+
+    # Validator method
+    setMethod(
+      "initialize",
+      "poly",
+      function(.Object, degree, coeff) {
+        # Validate inputs
+        if (!is.numeric(degree) || !is.numeric(coeff) || length(coeff) != degree + 1) {
+          return("Invalid input. Please provide a numeric degree and coefficients.")
+        }
+
+        .Object@degree <- degree
+        .Object@coeff <- coeff
+
+        return(.Object)
+      }
+    )
+
+    # show method
+    setMethod("show","poly",
+      function(object) {
+        cat("Polynomial of degree", object@degree, "with coefficients:", object@coeff, "\n")
+      }
+    )
+
+    # addition method
+    setMethod(
+      "+",
+      signature = c("poly", "poly"),
+      function(e1, e2) {
+        # Determine the maximum degree
+        max_degree <- max(e1@degree, e2@degree)
+
+        # Extend coefficients with zeros
+        coefficients1 <- c(e1@coeff, rep(0, max_degree - e1@degree))
+        coefficients2 <- c(e2@coeff, rep(0, max_degree - e2@degree))
+
+        # Perform addition
+        result <- poly(max_degree, coefficients1 + coefficients2)
+        return(result)
+      }
+    )
+
+    # subtraction method
+    setMethod(
+      "-",
+      signature = c("poly", "poly"),
+      function(e1, e2) {
+        # Determine the maximum degree
+        max_degree <- max(e1@degree, e2@degree)
+
+        # Extend coefficients with zeros
+        coefficients1 <- c(e1@coeff, rep(0, max_degree - e1@degree))
+        coefficients2 <- c(e2@coeff, rep(0, max_degree - e2@degree))
+
+        # Perform subtraction
+        result <- poly(max_degree, coefficients1 - coefficients2)
+        return(result)
+      }
+    )
+    ```
+
+b.  Use your poly class to run the following code.
+
+    ```{r}
+    p1 <- poly(2, c(2, 0, 3))
+    p2 <- poly(3, c(17, -1, -2, 7))
+    p1
+    p2
+    p1 + p2
+    p1 - p2
+    ```
+
+    I represent the polynomial with the degree and the coefficients. The coefficients are ordered from the lowest power term to the largest power term.
