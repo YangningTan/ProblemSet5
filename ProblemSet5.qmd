@@ -168,3 +168,52 @@ b.  Use your poly class to run the following code.
     ```
 
     I represent the polynomial with the degree and the coefficients. The coefficients are ordered from the lowest power term to the largest power term.
+
+## Problem 3 - data table
+
+We first import the data set
+
+```{r}
+library(nycflights13)
+library(data.table)
+```
+
+a.  Generate a table reporting the mean and median departure delay per airport. Generate a second table reporting the mean and median arrival delay per airport. Exclude any destination with under 10 flights. Do this exclusion through code, not manually.
+
+    Additionally,
+
+    -   Order both tables in descending mean delay.
+
+    -   Both tables should use the airport *names* not the airport *codes*.
+
+    -   Both tables should print all rows.
+
+    ```{r}
+    flights <- data.table(nycflights13::flights)
+    airports <- data.table(nycflights13::airports)
+
+    # set the name of the departure airport
+    setnames(airports, "faa", "origin")
+
+    # the first table
+    flights[airports, , on = "origin"
+          ][ ,.(name, dep_delay)
+          ][ , .(dep_delay_mean = mean(dep_delay, na.rm = TRUE),
+                 dep_delay_median = median(dep_delay, na.rm = TRUE)), by = name
+          ][order(-dep_delay_mean, -dep_delay_median)]
+    ```
+
+    ```{r}
+    # set the name of the arrival airport
+    setnames(airports, "origin", "dest")
+
+    # exclude destination with under 10 flights
+    flights_1 <- ungroup(flights[ , .(.N, dest, arr_delay) , by = dest][N >= 10])[ , .(dest, arr_delay)]
+
+    # the second table
+    flights_1[ , .(arr_delay_mean = mean(arr_delay, na.rm = TRUE),
+                   arr_delay_median = median(arr_delay, na.rm = TRUE)), by = dest
+            ][airports, , on = "dest"
+            ][ , .(name, arr_delay_mean, arr_delay_median)
+            ][order(-arr_delay_mean, -arr_delay_median)]
+    ```

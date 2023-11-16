@@ -287,6 +287,99 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>I represent the polynomial with the degree and the coefficients. The coefficients are ordered from the lowest power term to the largest power term.</p></li>
 </ol>
 </section>
+<section id="problem-3---data-table" class="level2">
+<h2 class="anchored" data-anchor-id="problem-3---data-table">Problem 3 - data table</h2>
+<p>We first import the data set</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nycflights13)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'data.table'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:lubridate':
+
+    hour, isoweek, mday, minute, month, quarter, second, wday, week,
+    yday, year</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:dplyr':
+
+    between, first, last</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:purrr':
+
+    transpose</code></pre>
+</div>
+</div>
+<ol type="a">
+<li><p>Generate a table reporting the mean and median departure delay per airport. Generate a second table reporting the mean and median arrival delay per airport. Exclude any destination with under 10 flights. Do this exclusion through code, not manually.</p>
+<p>Additionally,</p>
+<ul>
+<li><p>Order both tables in descending mean delay.</p></li>
+<li><p>Both tables should use the airport&nbsp;<em>names</em>&nbsp;not the airport&nbsp;<em>codes</em>.</p></li>
+<li><p>Both tables should print all rows.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>flights <span class="ot">&lt;-</span> <span class="fu">data.table</span>(nycflights13<span class="sc">::</span>flights)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>airports <span class="ot">&lt;-</span> <span class="fu">data.table</span>(nycflights13<span class="sc">::</span>airports)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># set the name of the departure airport</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(airports, <span class="st">"faa"</span>, <span class="st">"origin"</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># the first table</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>flights[airports, , on <span class="ot">=</span> <span class="st">"origin"</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>      ][ ,.(name, dep_delay)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>      ][ , .(<span class="at">dep_delay_mean =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">dep_delay_median =</span> <span class="fu">median</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), by <span class="ot">=</span> name</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>      ][<span class="fu">order</span>(<span class="sc">-</span>dep_delay_mean, <span class="sc">-</span>dep_delay_median)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                               name dep_delay_mean dep_delay_median
+   1:           Newark Liberty Intl       15.10795               -1
+   2:           John F Kennedy Intl       12.11216               -1
+   3:                    La Guardia       10.34688               -3
+   4:             Lansdowne Airport            NaN               NA
+   5: Moton Field Municipal Airport            NaN               NA
+  ---                                                              
+1436:       Boston Back Bay Station            NaN               NA
+1437:                    Black Rock            NaN               NA
+1438:        New Haven Rail Station            NaN               NA
+1439:     Wilmington Amtrak Station            NaN               NA
+1440:      Washington Union Station            NaN               NA</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set the name of the arrival airport</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(airports, <span class="st">"origin"</span>, <span class="st">"dest"</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># exclude destination with under 10 flights</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>flights_1 <span class="ot">&lt;-</span> <span class="fu">ungroup</span>(flights[ , .(.N, dest, arr_delay) , <span class="at">by =</span> dest][N <span class="sc">&gt;=</span> <span class="dv">10</span>])[ , .(dest, arr_delay)]</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># the second table</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>flights_1[ , .(<span class="at">arr_delay_mean =</span> <span class="fu">mean</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">arr_delay_median =</span> <span class="fu">median</span>(arr_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), by <span class="ot">=</span> dest</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>        ][airports, , on <span class="ot">=</span> <span class="st">"dest"</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>        ][ , .(name, arr_delay_mean, arr_delay_median)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        ][<span class="fu">order</span>(<span class="sc">-</span>arr_delay_mean, <span class="sc">-</span>arr_delay_median)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                           name arr_delay_mean arr_delay_median
+   1:     Columbia Metropolitan       41.76415               28
+   2:                Tulsa Intl       33.65986               14
+   3:         Will Rogers World       30.61905               16
+   4:      Jackson Hole Airport       28.09524               15
+   5:             Mc Ghee Tyson       24.06920                2
+  ---                                                          
+1454:                Black Rock             NA               NA
+1455:    New Haven Rail Station             NA               NA
+1456: Wilmington Amtrak Station             NA               NA
+1457:  Washington Union Station             NA               NA
+1458:              Penn Station             NA               NA</code></pre>
+</div>
+</div></li>
+</ol>
+</section>
 
 </main>
 <!-- /main column -->
