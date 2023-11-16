@@ -323,18 +323,19 @@ Attaching package: 'data.table'</code></pre>
 <li><p>Both tables should print all rows.</p></li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>flights <span class="ot">&lt;-</span> <span class="fu">data.table</span>(nycflights13<span class="sc">::</span>flights)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>airports <span class="ot">&lt;-</span> <span class="fu">data.table</span>(nycflights13<span class="sc">::</span>airports)</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># set the name of the departure airport</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(airports, <span class="st">"faa"</span>, <span class="st">"origin"</span>)</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># the first table</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>flights[airports, , on <span class="ot">=</span> <span class="st">"origin"</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>      ][ ,.(name, dep_delay)</span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>      ][ , .(<span class="at">dep_delay_mean =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">dep_delay_median =</span> <span class="fu">median</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), by <span class="ot">=</span> name</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>      ][<span class="fu">order</span>(<span class="sc">-</span>dep_delay_mean, <span class="sc">-</span>dep_delay_median)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the flights and airports table</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>flights <span class="ot">&lt;-</span> <span class="fu">data.table</span>(nycflights13<span class="sc">::</span>flights)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>airports <span class="ot">&lt;-</span> <span class="fu">data.table</span>(nycflights13<span class="sc">::</span>airports)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co"># set the name of the departure airport</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="fu">setnames</span>(airports, <span class="st">"faa"</span>, <span class="st">"origin"</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># the first table</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>flights[airports, , on <span class="ot">=</span> <span class="st">"origin"</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>      ][ ,.(name, dep_delay)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>      ][ , .(<span class="at">dep_delay_mean =</span> <span class="fu">mean</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">dep_delay_median =</span> <span class="fu">median</span>(dep_delay, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)), by <span class="ot">=</span> name</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>      ][<span class="fu">order</span>(<span class="sc">-</span>dep_delay_mean, <span class="sc">-</span>dep_delay_median)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                               name dep_delay_mean dep_delay_median
    1:           Newark Liberty Intl       15.10795               -1
@@ -376,6 +377,27 @@ Attaching package: 'data.table'</code></pre>
 1456: Wilmington Amtrak Station             NA               NA
 1457:  Washington Union Station             NA               NA
 1458:              Penn Station             NA               NA</code></pre>
+</div>
+</div></li>
+<li><p>How many flights did the aircraft model with the fastest average speed take? Produce a tibble with 1 row, and entires for the model, average speed (in MPH) and number of flights.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the planes table</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>planes <span class="ot">&lt;-</span> <span class="fu">data.table</span>(nycflights13<span class="sc">::</span>planes)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># the average speed of each model of plane</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>speed <span class="ot">&lt;-</span> planes[flights, , on <span class="ot">=</span> <span class="st">"tailnum"</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>              ][ , .(model, distance, air_time)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>              ][ , .(<span class="at">total_distance =</span> <span class="fu">sum</span>(distance, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">total_time =</span> <span class="fu">sum</span>(air_time, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">/</span> <span class="dv">60</span>,</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">number_of_flights =</span> .N), by <span class="ot">=</span> model</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>              ][ , average_speed <span class="sc">:</span><span class="er">=</span> total_distance <span class="sc">/</span> total_time]</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="co"># the model with fastest average speed</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>speed[<span class="fu">order</span>(<span class="sc">-</span>average_speed)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    ][<span class="dv">1</span>, .(model, average_speed, number_of_flights)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     model average_speed number_of_flights
+1: 777-232      680.5128                 4</code></pre>
 </div>
 </div></li>
 </ol>

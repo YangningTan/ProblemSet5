@@ -189,6 +189,7 @@ a.  Generate a table reporting the mean and median departure delay per airport. 
     -   Both tables should print all rows.
 
     ```{r}
+    # create the flights and airports table
     flights <- data.table(nycflights13::flights)
     airports <- data.table(nycflights13::airports)
 
@@ -216,4 +217,23 @@ a.  Generate a table reporting the mean and median departure delay per airport. 
             ][airports, , on = "dest"
             ][ , .(name, arr_delay_mean, arr_delay_median)
             ][order(-arr_delay_mean, -arr_delay_median)]
+    ```
+
+b.  How many flights did the aircraft model with the fastest average speed take? Produce a tibble with 1 row, and entires for the model, average speed (in MPH) and number of flights.
+
+    ```{r}
+    # create the planes table
+    planes <- data.table(nycflights13::planes)
+
+    # the average speed of each model of plane
+    speed <- planes[flights, , on = "tailnum"
+                  ][ , .(model, distance, air_time)
+                  ][ , .(total_distance = sum(distance, na.rm = TRUE),
+                         total_time = sum(air_time, na.rm = TRUE) / 60,
+                         number_of_flights = .N), by = model
+                  ][ , average_speed := total_distance / total_time]
+
+    # the model with fastest average speed
+    speed[order(-average_speed)
+        ][1, .(model, average_speed, number_of_flights)]
     ```
